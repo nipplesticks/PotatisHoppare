@@ -193,7 +193,7 @@ bool play()
 		else if (gPotatoesLeft == 3) gThreeLeft++;
 
 
-		printf("\rTries: %lld\tPotatoes Left: %d\tRecord: %d Times Two Left: %ld\tTimes Three Left", ++gCounter, gPotatoesLeft, gRecord, gTwoLeft, gThreeLeft);
+		printf("\rTries: %lld\tPotatoes Left: %d\tRecord: %d\tTimes Two Left: %ld\tTimes Three Left: %ld", ++gCounter, gPotatoesLeft, gRecord, gTwoLeft, gThreeLeft);
 		gWinString = "";
 		gPotatoesLeft = 0;
 		loadMap();
