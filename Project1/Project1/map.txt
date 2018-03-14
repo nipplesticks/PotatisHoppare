@@ -1,0 +1,7 @@
+X X P P P X X
+X O P P P O X
+P P P P P P P
+P P P O P P P
+P P P P P P P
+X O P P P O X
+X X P P P X X
