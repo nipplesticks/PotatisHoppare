@@ -17,7 +17,9 @@ const int LEFT = 3;
 int gMap[MAP_HEIGHT][MAP_WIDTH] = { 0 };
 int gPotatoesLeft = 0;
 long long gCounter = 0;
-int gRecord = 99999;
+long gTwoLeft = 0;
+long gThreeLeft = 0;
+int gRecord = 9;
 std::ofstream gOut;
 std::string gWinString = "";
 
@@ -90,6 +92,16 @@ bool canMove()
 	return canMove;
 }
 
+bool canMove(int y, int x, bool dir[])
+{
+	dir[UP] = canMoveUp(y, x);
+	dir[DOWN] = canMoveDown(y, x);
+	dir[RIGHT] = canMoveRight(y, x);
+	dir[LEFT] = canMoveLeft(y, x);
+
+	return dir[UP] || dir[DOWN] || dir[RIGHT] || dir[LEFT];
+}
+
 void moveUp(int y, int x)
 {
 	gMap[y][x] = EMPTY;
@@ -140,29 +152,32 @@ bool play()
 		{
 			int y = rand() % MAP_HEIGHT;
 			int x = rand() % MAP_WIDTH;
-			int dir = rand() % 4;
-			moved = true;
-			gPotatoesLeft--;
-			if (dir == UP && canMoveUp(y, x))
-			{
-				moveUp(y, x);
-			}
-			else if (dir == DOWN && canMoveDown(y, x))
-			{
-				moveDown(y, x);
-			}
-			else if (dir == RIGHT && canMoveRight(y, x))
-			{
-				moveRight(y, x);
-			}
-			else if (dir == LEFT && canMoveLeft(y, x))
-			{
-				moveLeft(y, x);
-			}
-			else
-			{
-				moved = false;
-				gPotatoesLeft++;
+			bool direction[4] = { false };
+			if (gMap[y][x] == POTATO && canMove(y,x, direction))
+			{	
+				int dir = rand() % 4;
+				while (!direction[dir])
+				{
+					dir = rand() % 4;
+				}
+				moved = true;
+				gPotatoesLeft--;
+				if (dir == UP)
+				{
+					moveUp(y, x);
+				}
+				else if (dir == DOWN)
+				{
+					moveDown(y, x);
+				}
+				else if (dir == RIGHT)
+				{
+					moveRight(y, x);
+				}
+				else if (dir == LEFT)
+				{
+					moveLeft(y, x);
+				}
 			}
 		}
 	}
@@ -174,7 +189,11 @@ bool play()
 	else
 	{
 		if (gPotatoesLeft < gRecord) gRecord = gPotatoesLeft;
-		printf("\rTries: %lld\tPotatoes Left: %d\tRecord: %d", ++gCounter, gPotatoesLeft, gRecord);
+		if (gPotatoesLeft == 2) gTwoLeft++;
+		else if (gPotatoesLeft == 3) gThreeLeft++;
+
+
+		printf("\rTries: %lld\tPotatoes Left: %d\tRecord: %d Times Two Left: %ld\tTimes Three Left", ++gCounter, gPotatoesLeft, gRecord, gTwoLeft, gThreeLeft);
 		gWinString = "";
 		gPotatoesLeft = 0;
 		loadMap();
