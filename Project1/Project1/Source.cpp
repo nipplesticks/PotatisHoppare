@@ -16,7 +16,7 @@ const int LEFT = 3;
 
 int gMap[MAP_HEIGHT][MAP_WIDTH] = { 0 };
 int gPotatoesLeft = 0;
-long long int gCounter = 0;
+long long gCounter = 0;
 int gRecord = 99999;
 std::ofstream gOut;
 std::string gWinString = "";
@@ -133,14 +133,13 @@ void moveLeft(int y, int x)
 bool play()
 {
 	bool won = false;
-
 	if (canMove())
 	{
 		bool moved = false;
 		while (!moved)
 		{
 			int y = rand() % MAP_HEIGHT;
-			int x = rand() % MAP_HEIGHT;
+			int x = rand() % MAP_WIDTH;
 			int dir = rand() % 4;
 			moved = true;
 			gPotatoesLeft--;
@@ -175,7 +174,7 @@ bool play()
 	else
 	{
 		if (gPotatoesLeft < gRecord) gRecord = gPotatoesLeft;
-		printf("\rTries: %d\tPotatoes Left: %d\tRecord: %d", ++gCounter, gPotatoesLeft, gRecord);
+		printf("\rTries: %lld\tPotatoes Left: %d\tRecord: %d", ++gCounter, gPotatoesLeft, gRecord);
 		gWinString = "";
 		gPotatoesLeft = 0;
 		loadMap();
