@@ -1,0 +1,9 @@
+HEIGHT 7
+WIDTH 7
+# # X X X # #
+# O X X X O #
+X X X X X X X
+X X X O X X X
+X X X X X X X
+# O X X X O #
+# # X X X # #

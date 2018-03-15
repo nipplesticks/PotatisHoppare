@@ -1,0 +1,26 @@
+Level 3:
+X X P P P X X
+X O P P P O X
+P P P P P P P
+P P P O P P P
+P P P P P P P
+X O P P P O X
+X X P P P X X
+
+Level 2:
+X X O O O X X
+X O O O O O X
+O O O O O O O
+O O O P O O O
+O O P P P O O
+X P P P P P X
+X X O O O X X
+
+Level 1:
+X X O O O X X
+X O O P O O X
+O O O P O O O
+O P P P P P O
+O O O P O O O
+X O O P O O X
+X X O O O X X
