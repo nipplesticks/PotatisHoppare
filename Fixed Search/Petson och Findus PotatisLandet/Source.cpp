@@ -47,14 +47,14 @@ struct MOVE
 	int fromX, fromY, toX, toY;
 	std::string toString() const
 	{
-		return "Move: " + 
-			std::to_string(fromX + 1) + 
-			"," + 
-			std::to_string(fromY + 1) + 
-			" to " + 
-			std::to_string(toX + 1) + 
-			"," + 
-			std::to_string(toY + 1) + 
+		return "Move: " +
+			std::to_string(fromX + 1) +
+			"," +
+			std::to_string(fromY + 1) +
+			" to " +
+			std::to_string(toX + 1) +
+			"," +
+			std::to_string(toY + 1) +
 			"\n";
 	}
 	std::string ID() const
@@ -96,12 +96,14 @@ int gPotatoesLeft = 0;
 std::string gCurrentMoveID = "";
 long long gCounter = 0;
 int gRecord = 32;
-bool gFirst = true;
+bool gFirst = false;
 
 auto gRng = std::default_random_engine{};
 
 void loadMap()
 {
+
+
 	std::ifstream input;
 	input.open("map.txt");
 	std::string currentLine = "";
@@ -115,7 +117,7 @@ void loadMap()
 		if (type == "HEIGHT") s >> gMapHeight;
 		else s >> gMapWidth;
 	}
-	
+
 	gMap = new TILE*[gMapHeight];
 
 	for (int y = 0; y < gMapHeight; y++)
@@ -159,16 +161,7 @@ void canMoveUp(TILE t, std::vector<MOVE> &p)
 			m.fromY = t.y;
 			m.toX = t.x;
 			m.toY = t.y - 2;
-
-			std::string id = gCurrentMoveID + m.ID();
-			bool okToMove = true;
-			for (size_t i = 0; i < gIlligalMoves.size() && okToMove; i++)
-			{
-				if (gIlligalMoves[i].ID == id)
-					okToMove = false;
-			}
-			if (okToMove)
-				p.push_back(m);
+			p.push_back(m);
 		}
 	}
 }
@@ -184,15 +177,7 @@ void canMoveRight(TILE t, std::vector<MOVE> &p)
 			m.fromY = t.y;
 			m.toX = t.x + 2;
 			m.toY = t.y;
-			std::string id = gCurrentMoveID + m.ID();
-			bool okToMove = true;
-			for (size_t i = 0; i < gIlligalMoves.size() && okToMove; i++)
-			{
-				if (gIlligalMoves[i].ID == id)
-					okToMove = false;
-			}
-			if (okToMove)
-				p.push_back(m);
+			p.push_back(m);
 		}
 	}
 }
@@ -208,15 +193,8 @@ void canMoveDown(TILE t, std::vector<MOVE> &p)
 			m.fromY = t.y;
 			m.toX = t.x;
 			m.toY = t.y + 2;
-			std::string id = gCurrentMoveID + m.ID();
-			bool okToMove = true;
-			for (size_t i = 0; i < gIlligalMoves.size() && okToMove; i++)
-			{
-				if (gIlligalMoves[i].ID == id)
-					okToMove = false;
-			}
-			if (okToMove)
-				p.push_back(m);
+
+			p.push_back(m);
 		}
 	}
 }
@@ -232,15 +210,7 @@ void canMoveLeft(TILE t, std::vector<MOVE> &p)
 			m.fromY = t.y;
 			m.toX = t.x - 2;
 			m.toY = t.y;
-			std::string id = gCurrentMoveID + m.ID();
-			bool okToMove = true;
-			for (size_t i = 0; i < gIlligalMoves.size() && okToMove; i++)
-			{
-				if (gIlligalMoves[i].ID == id)
-					okToMove = false;
-			}
-			if (okToMove)
-				p.push_back(m);
+			p.push_back(m);
 		}
 	}
 }
@@ -266,36 +236,41 @@ void collectPossibleMoves()
 
 void move(MOVE m)
 {
-	gMap[m.fromY][m.fromX].type = EMPTY;
-	gMap[m.toY][m.toX].type = POTATO;
-	int middleX, middleY;
-
-	if (m.fromY == m.toY)
+	std::string id = gCurrentMoveID + m.ID();
+	bool okToMove = true;
+	/*for (size_t i = 0; i < gIlligalMoves.size() && okToMove; i++)
 	{
-		middleX = (m.fromX + m.toX) / 2;
-		middleY = m.fromY;
-	}
-	else
+	if (gIlligalMoves[i].ID == id)
+	okToMove = false;
+	}*/
+	if (okToMove)
 	{
-		middleX = m.fromX;
-		middleY = (m.fromY + m.toY) / 2;
-	}
-	gMap[middleY][middleX].type = EMPTY;
-	gPotatoesLeft--;
+		gMap[m.fromY][m.fromX].type = EMPTY;
+		gMap[m.toY][m.toX].type = POTATO;
+		int middleX, middleY;
 
-	gCurrentMoveID += m.ID();
+		if (m.fromY == m.toY)
+		{
+			middleX = (m.fromX + m.toX) / 2;
+			middleY = m.fromY;
+		}
+		else
+		{
+			middleX = m.fromX;
+			middleY = (m.fromY + m.toY) / 2;
+		}
+		gMap[middleY][middleX].type = EMPTY;
+		gPotatoesLeft--;
+
+		gCurrentMoveID += m.ID();
+	}
 }
 
 void reverse(MOVE m)
 {
-	ILLIGAL_MOVE im;
-	im.ID = gCurrentMoveID;
-	gIlligalMoves.push_back(im);
-
 	size_t moveSize = m.ID().length();
 	size_t idSize = gCurrentMoveID.length();
 	gCurrentMoveID.erase(idSize - moveSize, idSize);
-
 	gMap[m.fromY][m.fromX].type = POTATO;
 	gMap[m.toY][m.toX].type = EMPTY;
 	int middleX, middleY;
@@ -360,7 +335,7 @@ void play()
 {
 	bool won = false;
 	loadMap();
-	std::cout << "Trying to find good start...\n";
+	std::cout << "Finding Answers...";
 	while (!won)
 	{
 		//printMap();
@@ -368,44 +343,50 @@ void play()
 			collectPossibleMoves();
 
 		size_t moves = gStack.size();
-		//std::cout << "Move nr: " << moves + 1 << std::endl;
+
 		size_t nrOfPossibleMoves = gPossibleMoves[moves].size();
-		//std::cout << "Possible moves: " << nrOfPossibleMoves << std::endl;
-		//std::cout << "Current moveID: " << gCurrentMoveID << std::endl;
 
 		if (gPotatoesLeft == 1)
 		{
 			won = true;
-			std::cout << "You won!\n";
+			std::cout << "\nYou won!\n";
 		}
 		else if (nrOfPossibleMoves == 0)
 		{
-			if (gFirst && gPotatoesLeft > 2)
+			if (gFirst && gPotatoesLeft > 2) // if its the first time and there are more then 2 potatoes left we restart.
 			{
 				restart();
 			}
 			else if (gFirst)
 			{
 				gFirst = false;
-				std::cout << "Start found!\n";
 			}
 
 			if (!gFirst)
 			{
-
 				if (gPotatoesLeft < gRecord) gRecord = gPotatoesLeft;
+
+				/*ILLIGAL_MOVE im;
+				im.ID = gCurrentMoveID;
+				gIlligalMoves.push_back(im);*/
+
+				int t = 1;
+				//if (gPotatoesLeft == 2) t = 2;
 
 				//std::cout << "Out of moves, Potatoes left: " << gPotatoesLeft << std::endl;
 				gReversed = true;
-				MOVE m;
-				m = gStack[moves - 1];
-				gStack.pop_back();
-				gPossibleMoves.pop_back();
-				reverse(m);
-
-
-
-				printf("\rTR: %llu, R: %d", ++gCounter, gRecord);
+				for (int i = 0; i < t; i++)
+				{
+					MOVE m;
+					m = gStack[--moves];
+					gStack.pop_back();
+					gPossibleMoves.pop_back();
+					reverse(m);
+				}
+				if (gCounter++ % 5000 == 0)
+				{
+					printf("\rTR: %llu\t\tD: %zd\tR: %d\tP: %d", gCounter, moves, gRecord, gPotatoesLeft);
+				}
 
 				//std::cout << "Times reversed: " << ++gCounter << std::endl;
 				//std::cout << "Move nr: " << moves - 1 << std::endl;
@@ -428,6 +409,7 @@ void play()
 
 int main()
 {
+
 	play();
 
 	for (int i = 0; i < gMapHeight; i++)
